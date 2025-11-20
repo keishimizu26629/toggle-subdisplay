@@ -28,17 +28,40 @@ A lightweight CLI tool for macOS to toggle between mirror and extended display m
 curl -fsSL https://raw.githubusercontent.com/keishimizu26629/toggle-subdisplay/main/install-temp.sh | bash
 ```
 
-This method:
-- ✅ Downloads binary to temporary directory
-- ✅ Doesn't affect your system or Homebrew
-- ✅ Easy cleanup when done
+After installation, you'll see options to use `toggle-subdisplay` command directly:
 
-### Alternative: Homebrew
+#### Option 1: Temporary PATH (this session only)
+```bash
+export PATH="/tmp/xxx:$PATH"  # Use the path shown in installer output
+toggle-subdisplay -q
+```
 
+#### Option 2: System installation (permanent)
+```bash
+sudo cp /tmp/xxx/toggle-subdisplay /usr/local/bin/  # Use the path from installer
+toggle-subdisplay -q
+```
+
+#### Option 3: Homebrew (recommended for permanent use)
 ```bash
 brew tap keishimizu26629/tap
 brew install toggle-subdisplay
+toggle-subdisplay -q
 ```
+
+#### Option 4: Full path (no setup required)
+```bash
+/tmp/xxx/toggle-subdisplay -q  # Use the exact path from installer output
+```
+
+### Installation Methods Comparison
+
+| Method | Command Usage | Persistence | System Impact |
+|--------|---------------|-------------|---------------|
+| **Temporary PATH** | `toggle-subdisplay` | Session only | None |
+| **System Install** | `toggle-subdisplay` | Permanent | Minimal |
+| **Homebrew** | `toggle-subdisplay` | Permanent | Standard |
+| **Full Path** | `/tmp/xxx/toggle-subdisplay` | Temporary | None |
 
 ## 📖 Usage
 

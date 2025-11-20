@@ -40,62 +40,23 @@ echo "Cleanup when done:"
 echo "  rm -rf $TEMP_DIR"
 echo ""
 
-# Installation options
-if [ -t 0 ]; then  # Only prompt if running interactively
-    echo "Installation options:"
-    echo "1) Use full path (safest, no system changes)"
-    echo "2) Add to PATH temporarily (this session only)"
-    echo "3) Install to /usr/local/bin (permanent, requires sudo)"
-    echo "4) Show Homebrew installation command"
-    echo ""
-    read -p "Choose option (1-4) [1]: " -n 1 -r
-    echo
-    
-    case $REPLY in
-        2)
-            export PATH="$TEMP_DIR:$PATH"
-            echo "✅ Added to PATH temporarily. Use 'toggle-subdisplay' directly."
-            echo "⚠️  Will be removed when terminal is closed."
-            ;;
-        3)
-            if sudo -n true 2>/dev/null; then
-                # sudo available without password
-                sudo cp "$TEMP_DIR/toggle-subdisplay" /usr/local/bin/
-                echo "✅ Installed to /usr/local/bin/toggle-subdisplay (permanent)"
-                echo "💡 You can now use 'toggle-subdisplay' from anywhere"
-            else
-                echo "Installing to /usr/local/bin (requires password):"
-                if sudo cp "$TEMP_DIR/toggle-subdisplay" /usr/local/bin/ 2>/dev/null; then
-                    echo "✅ Installed to /usr/local/bin/toggle-subdisplay (permanent)"
-                    echo "💡 You can now use 'toggle-subdisplay' from anywhere"
-                else
-                    echo "❌ Installation failed. Use option 1 or 2 instead."
-                    echo "Use full path: $TEMP_DIR/toggle-subdisplay"
-                fi
-            fi
-            ;;
-        4)
-            echo "For permanent Homebrew installation:"
-            echo "  brew tap keishimizu26629/tap"
-            echo "  brew install toggle-subdisplay"
-            echo ""
-            echo "Current temporary installation:"
-            echo "Use full path: $TEMP_DIR/toggle-subdisplay"
-            ;;
-        *)
-            echo "Using full path method (safest):"
-            echo "Use: $TEMP_DIR/toggle-subdisplay"
-            ;;
-    esac
-else
-    # Non-interactive mode
-    if [ "$INSTALL_METHOD" = "system" ] && command -v sudo >/dev/null; then
-        if sudo -n cp "$TEMP_DIR/toggle-subdisplay" /usr/local/bin/ 2>/dev/null; then
-            echo "✅ Installed to /usr/local/bin/toggle-subdisplay"
-        else
-            echo "Use full path: $TEMP_DIR/toggle-subdisplay"
-        fi
-    else
-        echo "Use full path: $TEMP_DIR/toggle-subdisplay"
-    fi
-fi
+# How to use toggle-subdisplay command directly
+echo "📋 To use 'toggle-subdisplay' command directly, choose one of these options:"
+echo ""
+echo "Option 1: Add to PATH temporarily (this session only)"
+echo "  export PATH=\"$TEMP_DIR:\$PATH\""
+echo "  toggle-subdisplay -q"
+echo ""
+echo "Option 2: Install to system (permanent, requires sudo)"
+echo "  sudo cp $TEMP_DIR/toggle-subdisplay /usr/local/bin/"
+echo "  toggle-subdisplay -q"
+echo ""
+echo "Option 3: Use Homebrew (recommended for permanent installation)"
+echo "  brew tap keishimizu26629/tap"
+echo "  brew install toggle-subdisplay"
+echo "  toggle-subdisplay -q"
+echo ""
+echo "Option 4: Use full path (no setup required)"
+echo "  $TEMP_DIR/toggle-subdisplay -q"
+echo ""
+echo "💡 Copy and run any of the above commands to get started!"
