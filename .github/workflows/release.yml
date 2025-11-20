@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build binary
+        run: swift build -c release
+
+      - name: Create release archive
+        run: |
+          mkdir -p release
+          cp .build/release/toggle-subdisplay release/
+          cp README.md LICENSE release/
+          tar -czf toggle-subdisplay-${{ github.ref_name }}-macos.tar.gz -C release .
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            .build/release/toggle-subdisplay
+            toggle-subdisplay-${{ github.ref_name }}-macos.tar.gz
+          generate_release_notes: true
+
+      - name: Update Homebrew formula
+        uses: dawidd6/action-homebrew-bump-formula@v3
+        with:
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          formula: toggle-subdisplay
+          tap: keishimizu26629/homebrew-tap
+          commit_message: "Bump {{formula}} to {{version}}"
