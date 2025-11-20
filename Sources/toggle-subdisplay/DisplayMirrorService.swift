@@ -13,26 +13,28 @@ struct DisplayMirrorService {
 
     /// 現在のミラー状態を確認
     func queryState() -> MirrorState {
-        let displays = getActiveDisplays()
+        let onlineDisplays = getOnlineDisplays()
+        let activeDisplays = getActiveDisplays()
         let mainDisplayID = CGMainDisplayID()
 
         // 内蔵ディスプレイのみの場合
-        if displays.count == 1 {
+        if onlineDisplays.count == 1 {
             return .none
         }
 
         // 外部ディスプレイが2台以上の場合
-        if displays.count > 2 {
+        if onlineDisplays.count > 2 {
             return .none
         }
 
         // 内蔵 + 外部1台の場合、ミラー状態を確認
-        let externalDisplay = displays.first { $0 != mainDisplayID }
-        guard let externalDisplayID = externalDisplay else {
+        guard onlineDisplays.count == 2 else {
             return .none
         }
 
-        return CGDisplayIsInMirrorSet(externalDisplayID) != 0 ? .on : .off
+        // ミラーリング判定：アクティブディスプレイ数で判断
+        // ミラーリング中はアクティブディスプレイが1つ、拡張中は2つ
+        return activeDisplays.count == 1 ? .on : .off
     }
 
     /// ミラー状態をトグル
@@ -44,9 +46,9 @@ struct DisplayMirrorService {
             return
         }
 
-        let displays = getActiveDisplays()
+        let onlineDisplays = getOnlineDisplays()
         let mainDisplayID = CGMainDisplayID()
-        let externalDisplayID = displays.first { $0 != mainDisplayID }!
+        let externalDisplayID = onlineDisplays.first { $0 != mainDisplayID }!
 
         var configRef: CGDisplayConfigRef?
 
@@ -83,6 +85,21 @@ struct DisplayMirrorService {
         var displayCount: UInt32 = 0
 
         let result = CGGetActiveDisplayList(maxDisplays, &displayIDs, &displayCount)
+
+        guard result == .success else {
+            return []
+        }
+
+        return Array(displayIDs.prefix(Int(displayCount)))
+    }
+
+    /// オンラインディスプレイ一覧を取得（ミラーリング中でも全ディスプレイを取得）
+    private func getOnlineDisplays() -> [CGDirectDisplayID] {
+        let maxDisplays: UInt32 = 32
+        var displayIDs = Array<CGDirectDisplayID>(repeating: 0, count: Int(maxDisplays))
+        var displayCount: UInt32 = 0
+
+        let result = CGGetOnlineDisplayList(maxDisplays, &displayIDs, &displayCount)
 
         guard result == .success else {
             return []
