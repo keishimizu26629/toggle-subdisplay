@@ -8,6 +8,8 @@ on:
 jobs:
   release:
     runs-on: macOS-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -28,11 +30,13 @@ jobs:
             .build/release/toggle-subdisplay
             toggle-subdisplay-${{ github.ref_name }}-macos.tar.gz
           generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update Homebrew formula
-        uses: dawidd6/action-homebrew-bump-formula@v3
-        with:
-          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-          formula: toggle-subdisplay
-          tap: keishimizu26629/homebrew-tap
-          commit_message: "Bump {{formula}} to {{version}}"
+      # Homebrew formula update (manual for now)
+      # - name: Update Homebrew formula
+      #   uses: dawidd6/action-homebrew-bump-formula@v3
+      #   with:
+      #     token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+      #     formula: toggle-subdisplay
+      #     tap: keishimizu26629/homebrew-tap
+      #     commit_message: "Bump {{formula}} to {{version}}"
