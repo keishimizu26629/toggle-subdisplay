@@ -25,7 +25,7 @@ A lightweight CLI tool for macOS to toggle between mirror and extended display m
 ### Quick Install (Recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/keishimizu26629/toggle-subdisplay/main/install-temp.sh | bash
+curl -fsSL https://raw.githubusercontent.com/keishimizu26629/toggle-subdisplay/main/install.sh | bash
 ```
 
 After installation, you'll see options to use `toggle-subdisplay` command directly:

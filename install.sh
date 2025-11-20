@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# toggle-subdisplay temporary installer
-# Clean installation without affecting system Homebrew
+# toggle-subdisplay installer
+# Clean installation with multiple deployment options
 
 set -e
 
