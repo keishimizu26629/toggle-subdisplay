@@ -1,41 +1,56 @@
 #!/bin/bash
 
-# toggle-subdisplay 一時インストールスクリプト
-# 他人のシステムを汚さない方法
+# toggle-subdisplay temporary installer
+# Clean installation without affecting system Homebrew
 
 set -e
 
-echo "🖥️  toggle-subdisplay 一時インストール"
-echo "=================================="
-
-# 一時ディレクトリを作成
+# Create temporary directory
 TEMP_DIR=$(mktemp -d)
-echo "📁 一時ディレクトリ: $TEMP_DIR"
+if [ ! -d "$TEMP_DIR" ]; then
+    echo "Error: Failed to create temporary directory" >&2
+    exit 1
+fi
 
-# バイナリをダウンロード
-echo "📥 バイナリをダウンロード中..."
-curl -L -s https://github.com/keishimizu26629/toggle-subdisplay/releases/download/v0.1.0/toggle-subdisplay -o "$TEMP_DIR/toggle-subdisplay"
+# Download binary
+echo "Installing toggle-subdisplay..."
+if ! curl -L -s -f https://github.com/keishimizu26629/toggle-subdisplay/releases/download/v0.1.0/toggle-subdisplay -o "$TEMP_DIR/toggle-subdisplay"; then
+    echo "Error: Failed to download toggle-subdisplay" >&2
+    rm -rf "$TEMP_DIR"
+    exit 1
+fi
 
-# 実行権限を付与
+# Set executable permission
 chmod +x "$TEMP_DIR/toggle-subdisplay"
 
-echo "✅ インストール完了！"
+# Verify installation
+if ! "$TEMP_DIR/toggle-subdisplay" --query >/dev/null 2>&1; then
+    echo "Error: Installation verification failed" >&2
+    rm -rf "$TEMP_DIR"
+    exit 1
+fi
+
+echo "✅ Installation complete!"
 echo ""
-echo "🚀 使用方法:"
-echo "  $TEMP_DIR/toggle-subdisplay -q    # 状態確認"
-echo "  $TEMP_DIR/toggle-subdisplay       # モード切り替え"
+echo "Usage:"
+echo "  $TEMP_DIR/toggle-subdisplay -q    # Check current state"
+echo "  $TEMP_DIR/toggle-subdisplay       # Toggle display mode"
 echo ""
-echo "🧹 使用後のクリーンアップ:"
+echo "Cleanup when done:"
 echo "  rm -rf $TEMP_DIR"
 echo ""
 
-# オプション: PATHに一時追加
-read -p "一時的にPATHに追加しますか？ (y/N): " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    export PATH="$TEMP_DIR:$PATH"
-    echo "✅ PATHに追加しました。このセッション中は 'toggle-subdisplay' で実行可能です。"
-    echo "⚠️  ターミナルを閉じると自動的に削除されます。"
+# Optional: Add to PATH temporarily
+if [ -t 0 ]; then  # Only prompt if running interactively
+    read -p "Add to PATH temporarily? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        export PATH="$TEMP_DIR:$PATH"
+        echo "✅ Added to PATH. Use 'toggle-subdisplay' directly in this session."
+        echo "⚠️  Will be removed when terminal is closed."
+    else
+        echo "Use full path: $TEMP_DIR/toggle-subdisplay"
+    fi
 else
-    echo "💡 フルパスで実行してください: $TEMP_DIR/toggle-subdisplay"
+    echo "Use full path: $TEMP_DIR/toggle-subdisplay"
 fi
