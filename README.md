@@ -30,15 +30,31 @@ curl -fsSL https://raw.githubusercontent.com/keishimizu26629/toggle-subdisplay/m
 
 After installation, you'll see options to use `toggle-subdisplay` command directly:
 
-#### Option 1: Temporary PATH (this session only)
+#### Option 1a: Temporary PATH (this session only)
 ```bash
 export PATH="/tmp/xxx:$PATH"  # Use the path shown in installer output
 toggle-subdisplay -q
 ```
 
-#### Option 2: System installation (permanent)
+#### Option 1b: Permanent PATH via shell config
+```bash
+echo 'export PATH="/tmp/xxx:$PATH"' >> ~/.zshrc  # Use actual path from installer
+source ~/.zshrc
+toggle-subdisplay -q
+```
+
+#### Option 2a: System installation (permanent, requires sudo)
 ```bash
 sudo cp /tmp/xxx/toggle-subdisplay /usr/local/bin/  # Use the path from installer
+toggle-subdisplay -q
+```
+
+#### Option 2b: User bin installation (permanent, no sudo)
+```bash
+mkdir -p ~/bin
+cp /tmp/xxx/toggle-subdisplay ~/bin/  # Use the path from installer
+echo 'export PATH="$HOME/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
 toggle-subdisplay -q
 ```
 
@@ -56,12 +72,14 @@ toggle-subdisplay -q
 
 ### Installation Methods Comparison
 
-| Method | Command Usage | Persistence | System Impact |
-|--------|---------------|-------------|---------------|
-| **Temporary PATH** | `toggle-subdisplay` | Session only | None |
-| **System Install** | `toggle-subdisplay` | Permanent | Minimal |
-| **Homebrew** | `toggle-subdisplay` | Permanent | Standard |
-| **Full Path** | `/tmp/xxx/toggle-subdisplay` | Temporary | None |
+| Method | Command Usage | Persistence | System Impact | Sudo Required |
+|--------|---------------|-------------|---------------|---------------|
+| **Temporary PATH** | `toggle-subdisplay` | Session only | None | No |
+| **Permanent PATH** | `toggle-subdisplay` | Permanent | Shell config | No |
+| **System Install** | `toggle-subdisplay` | Permanent | System-wide | Yes |
+| **User Bin** | `toggle-subdisplay` | Permanent | User-only | No |
+| **Homebrew** | `toggle-subdisplay` | Permanent | Standard | No |
+| **Full Path** | `/tmp/xxx/toggle-subdisplay` | Temporary | None | No |
 
 ## 📖 Usage
 
